@@ -1,98 +1,144 @@
-var express = require('express');
-var router = express.Router();
-var mysql_dbc = require('../commons/db_conn')();
-var connection = mysql_dbc.init();
-var QUERY = require('../database/query');
-var isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.redirect('/login');
-};
-require('../commons/helpers');
+const express = require('express');
+const router = express.Router();
+// const mySqlDbc = require('../commons/db_conn')();
+// const connection = mySqlDbc.init();
+const QUERY = require('../database/query');
+const pool = require('../commons/db_conn_pool');
+const async = require('async');
+const util = require('../util/util');
 
 // 이달의/지난 교육과정
-router.get(['/current', '/passed'], isAuthenticated, function(req, res){
-
-  var _host_name = req.headers.host,
-      _logo_name = null,
-      _logo_image_name = null;
-
-    _logo_name = _host_name.split('.')[1];    
-    _logo_name = _logo_name === undefined ? 'orangenamu' : _logo_name;
-    _logo_image_name = _logo_name + '.png';        
-
+router.get(['/current', '/passed'], util.isAuthenticated, util.isTermsApproved, util.getLogoInfo, (req, res, next) => {
+  const {searchby, searchtext, page = 1} = req.query;
   // 이달/지난 교육의 경로를 세션에 저장한다.
   req.user.root_path = req.originalUrl;
 
-	// req.url 에 따라 쿼리문을 달리한다.
-  var query = null,
-      // 완료/미완료 order (정렬순서) 가장 낮은 강의의 id
-      next_course_id = null,
-      // 완료/미완료 order (정렬순서) 가장 낮은 사용자 강의의 id
-      next_training_user_id = null,      
-      // 완료한 강의의 수
-      count_course_done = 0;
+  // req.url 에 따라 쿼리문을 달리한다.
+  let query;
+  // 완료/미완료 order (정렬순서) 가장 낮은 강의의 id
+  let nextCourseId = null;
+  // 완료/미완료 order (정렬순서) 가장 낮은 사용자 강의의 id
+  let nextTrainingUserId = null;
+  // 완료한 강의의 수
+  let courseDoneCount = 0;
+  let header, courses;
+  let currentPath;
 
   if (req.path === '/current') {
-    query = QUERY.EDU.SEL_CURRENT;
     header = '이달의 교육과정';
-  } else if (req.url === '/passed') {
-    query = QUERY.EDU.SEL_PASSED;
-    header = '지난 교육과정';
+    currentPath = 'current';
+    query = QUERY.EDU.SEL_CURRENT;
+  } else if (req.path === '/passed') {
+    // query = QUERY.EDU.SEL_PASSED();
+    // query = QUERY.EDU.SEL_PASSED('course', '운영');
+    // query = QUERY.EDU.SEL_PASSED('month', '2017-03');
+    header = '교육과정 검색';
+    // header = '지난 교육과정';
+    currentPath = 'passed';
+    if (searchby != null && searchtext != null) {
+      query = QUERY.EDU.SEL_PASSED(searchby, searchtext, page, 10);
+    }
   }
 
-	query = connection.query(query, [req.user.user_id, req.user.user_id], function (err, data) {
-		if (err) {
-			// 쿼리 실패시
-      return res.json({
-        success: false,
-        msg: err
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    async.series(
+      [
+        (callback) => {
+          if (query) {
+            connection.query(query,
+              [ req.user.user_id, req.user.user_id ],
+              (err, rows) => {
+                // console.log(q.sql);
+                if (err) {
+                  callback(err, null);
+                } else {
+                  courses = rows;
+                  // console.log(courses.length);
+                  if (courses.length > 0) {
+                    nextTrainingUserId = courses[0].training_user_id;
+                    nextCourseId = courses[0].course_id;
+
+                    for (i = 0; i < courses.length; i++) {
+                      if (currentPath !== 'passed' || (currentPath === 'passed' && courses[i].can_replay === 1)) {
+                        if (courses[i].completed_rate !== 100) {
+                          nextTrainingUserId = courses[i].training_user_id;
+                          nextCourseId = courses[i].course_id;
+                          break;
+                        }
+                      }
+                    }
+
+                    // 완료하지 않은 강의의 수
+                    for (var i = 0; i < courses.length; i++) {
+                      if (courses[i].completed_rate === 100) {
+                        courseDoneCount += 1;
+                      }
+                    }
+                  }
+                  callback(null, rows);
+                }
+              }
+            );
+          } else {
+            callback(null, null);
+          }
+        },
+        callback => { // results[1]
+          connection.query('SELECT FOUND_ROWS() AS row_count; ',
+            [],
+            (err, data) => {
+              callback(err, data);
+            }
+          );
+        },
+        // 지난 교육과정일 경우 검색을 위한 배정월 목록을 가져온다.
+        callback => {
+          if (currentPath === 'passed') {
+            connection.query(QUERY.EDU.SEL_PASSED_EDU_MONTH,
+                [ req.user.user_id ],
+                (err, rows) => {
+                  callback(err, rows);
+                }
+              );
+          } else {
+            callback(null, null);
+          }
+        }
+      ],
+      (err, results) => {
+        connection.release();
+        if (err) {
+          console.error(err);
+          throw new Error(err);
+        } else {
+          let pagination = {
+            page: page,
+            pageCount: Math.ceil(results[1][0].row_count / 10)
+          };
+
+          // console.log(pagination);
+
+          res.render('education', {
+            group_path: 'education',
+            current_path: currentPath,
+            current_url: req.url,
+            req: req.get('origin'),
+            loggedIn: req.user,
+            header: header,
+            courses: courses,
+            month_list: results[2],
+            next_training_user_id: nextTrainingUserId,
+            next_course_id: nextCourseId,
+            count_course_done: courseDoneCount,
+            pagination: pagination,
+            page: page,
+            searchby: searchby,
+            searchtext: searchtext
+          });
+        }
       });
-		} else {     
-      ////console.log(query.sql);
-			// console.log(data);
-      courses = data;
-
-      if (courses.length > 0) {
-        // 학습하기 버튼 클릭 시 시작 세션 id를 구한다.
-        // 기본은 id 가 가장 작은 세션이다.
-        // 그 다음은 완료하지 않은 세션 중 id 가 가장 작은 세션이다. 
-        next_training_user_id = courses[0].training_user_id;
-        next_course_id = courses[0].course_id;
-        
-        for (i = 0; i < courses.length; i++) {
-          if (courses[i].completed_rate !== 100) {
-            next_training_user_id = courses[i].training_user_id; 
-            next_course_id = courses[i].course_id;
-            break;
-          }
-        }
-
-        // 완료하지 않은 강의의 수
-        for (var i = 0; i < courses.length; i++) {
-          if (courses[i].completed_rate === 100) {
-            count_course_done += 1;
-          }
-        }
-      }
-
-			// 쿼리 성공시
-			res.render('education', {
-				current_path: 'education',
-        current_url: req.url,
-				title: global.PROJ_TITLE,
-        logo : _logo_name,
-        logo_image: _logo_image_name,        
-				req: req.get('origin'),
-				loggedIn: req.user,        
-				header: header,
-				courses: data,
-        next_training_user_id: next_training_user_id,
-        next_course_id: next_course_id,
-        count_course_done: count_course_done
-			});
-		}
-	});
+  });
 });
 
 module.exports = router;

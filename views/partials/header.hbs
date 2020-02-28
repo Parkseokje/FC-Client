@@ -1,16 +1,26 @@
 
 <header id="hd">
-    <h1 class="title ellipsis">
-        {{header}}
-    </h1>
-    <a href="#" class="nav_link">        
-        <img src="/images/ico_hamburg.png" alt="메뉴" width="25" class="ico_hamburg" />
-    </a>
-
-    {{#if (isEquals group_path 'contents') }}
-    <a href="/course/{{training_user_id}}/{{course_id}}" class="exit_link">  
-        <img src="/images/img_exit.png" alt="강의페이지로 이동" width="25" class="ico_exit" />
-    </a>
-    {{/if}}
-   
+  <h1 class="title ellipsis">
+    {{header}}
+  </h1>
+  {{#ifCond current_path '!==' 'quickicon' }}
+  <a href="#" class="nav_link">
+    <img src="/static/images/ico_hamburg.png" alt="메뉴" width="25" class="ico_hamburg" />
+  </a>
+  {{/ifCond}}
+  {{#ifCond (isEquals group_path 'education') '&&' (isEquals current_path 'current') }}
+  <a href="/education/passed" class="search_link">
+    <img src="/static/images/search.png" alt="검색" width="25" class="ico_exit" />
+  </a>
+  {{/ifCond}}
+  {{#if (isEquals group_path 'contents') }}
+  <a href="/course/{{training_user_id}}/{{course_id}}" class="exit_link">
+    <img src="/static/images/img_exit.png" alt="강의페이지로 이동" width="25" class="ico_exit" />
+  </a>
+  {{/if}}
+  {{#if (isEquals current_path 'quickicon')}}
+  <a href="javascript:history.go(-1);" class="back_link">
+    <img src="/static/images/img_exit.png" alt="이전 페이지" width="25" class="ico_exit" />
+  </a>
+  {{/if}}
 </header>

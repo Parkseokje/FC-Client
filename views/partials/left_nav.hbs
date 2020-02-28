@@ -1,34 +1,64 @@
 <nav id="navigation" class="blind">
-    <div class="logo_section">
-        <img src="/images/logo/{{logo_image}}" alt="{{logo}}" width="80" class="img_logo" />
-        <span class="logo-txt">오렌지나무시스템 <br />
-          <small>{{ loggedIn.name }} 님, 반갑습니다.</small> <br />
-          <small>포인트 : {{#if loggedIn.point }}{{loggedIn.point}}{{else}}없음{{/if}}</small>
-        </span>            
+  <div class="logo_section">
+    <div class="img_logo">
+      <img src="/static/images/logo/{{logoImageName}}" alt="{{logo}}" width="80" />
     </div>
+    <div class="logo-txt">{{logoName}} <br />
+      <small>{{ loggedIn.name }} 님, 반갑습니다.</small> <br />
+      <!--<small>포인트 : {{#if loggedIn.point }}{{loggedIn.point}}{{else}}없음{{/if}}</small>-->
+    </div>
+  </div>
 
-    <ol class="nav_list">
-        <li>
-            <a href="/education/current">
-                <span class="txt">이달의 교육과정</span>
-            </a>
-        </li>
-        <li>
-            <a href="/education/passed">
-                <span class="txt">지난 교육과정</span>
-            </a>
-        </li>
-        <li>
-            <a href="/profile">
-                <span class="txt">정보수정</span>
-            </a>
-        </li>
-        <li>
-            <a href="/logout">
-                <span class="txt">로그아웃</span>
-            </a>
-        </li>        
-    </ol>
-</nav> 
+  <ol class="nav_list">
+    <li>
+      <a href="/notice">
+        <span class="txt">공지사항</span>
+      </a>
+    </li>
+    <li>
+      <a href="/education/current">
+        <span class="txt">이달의 교육과정</span>
+      </a>
+    </li>
+    <li>
+      <a href="/education/passed">
+        <span class="txt">교육과정 검색</span>
+      </a>
+    </li>
+    <li>
+      <a href="/point">
+        <span class="txt">포인트 현황</span>
+      </a>
+    </li>
+    <li>
+      <a href="/profile">
+        <span class="txt">정보수정</span>
+      </a>
+    </li>
+    <li>
+      <a href="/help">
+        <span class="txt">도움말</span>
+      </a>
+      {{!-- <a target="_blank" href="https://docs.google.com/presentation/d/1-n73TAxdPWGcTL_EIXROl55Bdfg0IMzaDf4GmrH-1Qw/pub?start=false&loop=false&delayms=3000">
+        <span class="txt">도움말</span>
+      </a> --}}
+    </li>
+    <li>
+      <!--<a href="http://pf.kakao.com/_aRAPd" target="_blank">
+        <span class="txt">고객센터</span>
+      </a>-->
+      <a href="mailto:molla4455@gmail.com">문의하기</a>
+    </li>
+    <li>
+      <a href="/logout">
+        <span class="txt">로그아웃</span>
+      </a>
+    </li>
+  </ol>
+
+  <div class="img-container">
+    <img src="/static/images/logo/{{logoImageName}}" alt="{{logo}}" width="35" class="" />
+  </div>
+</nav>
 
 <div id="bg_screen" class="bg_screen blind"></div>

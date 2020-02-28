@@ -1,42 +1,217 @@
 {{> header}}
 
+<div class="banner">
+  <div class="banner-item">
+    <i class="fa fa-bell-o"></i>
+    공지사항
+  </div>
+  <ul class="marquee banner-item" style="display: none; float: right;">
+  </ul>
+</div>
+<br><br>
+
+{{#ifCond (isEquals group_path 'education') '&&' (isEquals current_path 'passed') }}
+<div class="search_section">
+  <input type="hidden" id="searchby" value="{{searchby}}">
+  <input type="hidden" id="searchtext" value="{{searchtext}}">
+
+  <div class="not-select">
+    <div class="radio">
+      <label>
+        <input type="radio"
+          name="optradio"
+          id="radio-course-title"
+          checked="true">  교육과정명 또는 강의명
+        </label>
+    </div>
+    <input
+      type="search"
+      name="course-title" id="inputCourse"
+      placeholder="검색어를 입력하세요"
+      class="search_section_input"
+      autofocus autocomplete="off"
+    />
+  </div>
+  <br />
+  <div class="radio">
+    <label>
+      <input type="radio"
+        name="optradio"
+        id="radio-assign-month">
+        기간별
+      </label>
+  </div>
+  <select name="assign-month" id="selectAssignMonth" class="">
+    <option selected="true" disabled="disabled">기간을 선택하세요</option>
+    {{#each month_list}}
+    <option value="{{yearmonth}}">{{yearmonth}}</option>
+    {{/each}}
+  </select>
+  <br /><br />
+  <button type="button" class="btn_login blind" id="btnSearchCourse" data-redirect="/education/{{current_path}}">검색</button>
+</div>
+{{/ifCond}}
+
 <div class="list_section">
   {{#if courses}}
 	<ol>
 	{{#each courses}}
-		<li class="item_wrap">
-				{{#if thumbnail}}
-				<a href="/course/{{training_user_id}}/{{course_id}}" class="list_item">
-				<img src="/uploads/{{thumbnail}}" alt="" width="100" class="img_list" />
-				{{else}}
-				<a href="/course/{{training_user_id}}/{{course_id}}" class="list_item no_img_list">
-				{{/if}}
-					<span class="info">
-            <span class="tit"><small>{{ edu_name }}</small> | {{course_name}}</span>
-						<span class="author">{{teacher_name }}</span>  
-						<span class="progress_bg">
-							<span class="progress" style="width: {{completed_rate}}%"></span>
-						</span>
-						<span class="achievement">{{completed_rate}}% {{#if course_end_dt}}({{ stime course_end_dt}} 완료){{/if}}</span>
-						<span class="author">{{start_dt}} ~ {{end_dt}}</span>
-					</span>
-				</a>
-		</li>
+    {{#if (isEquals ../current_path 'passed')}}
+    <li class="item_wrap" data-yearmonth="{{dateformat start_dt 'yyyy년 m월'}}">
+      {{#ifCond can_replay '==' 1}}
+        {{#if thumbnail}}
+          {{#if (isEquals ../../../loggedIn.isdemo 0)}}
+          <a href="/course/{{training_user_id}}/{{course_id}}" class="list_item" data-training-user-id="{{training_user_id}}" data-course-id="{{course_id}}">
+          {{else}}
+          <a href="#" class="list_item">
+          {{/if}}
+          <img src="/uploads/{{thumbnail}}" alt="" width="100" class="img_list" />
+        {{else}}
+          <!-- thumbnail not exists -->
+          {{#if (isEquals ../../../../loggedIn.isdemo 0)}}
+          <a href="/course/{{training_user_id}}/{{course_id}}" class="list_item no_img_list"  data-training-user-id="{{training_user_id}}" data-course-id="{{course_id}}">
+          {{else}}
+          <a href="#" class="list_item no_img_list">
+          {{/if}} <!-- is demo -->
+        {{/if}}
+      {{else}} <!-- can not replay -->
+        {{#if thumbnail}}
+        <a href="#" class="list_item not-active">
+        <img src="/uploads/{{thumbnail}}" alt="" width="100" class="img_list" />
+        {{else}}
+        <a href="#" class="list_item no_img_list not-active">
+        {{/if}}
+      {{/ifCond}}
+      <span class="info">
+        <div class="progress-status">
+          <div class="bootstrap-iso">
+            {{#if (isEquals completed_rate 0)}}
+            <span class="label label-default">미수강</span>
+            {{else}}
+              {{#if (isEquals completed_rate 100)}}
+              <span class="label label-success">완료</span>
+              {{else}}
+              <span class="label label-warning">진행중</span>
+              {{/if}}
+            {{/if}}
+            <span class="pull-right author">
+              {{#if teacher_name}}<i class="fa fa-user-circle" aria-hidden="true"></i>{{/if}}
+              {{teacher_name}}
+            </span>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+        {{#ifCond can_replay '==' 1}}
+        <span class="tit">{{ edu_name }} | {{course_name}}</span>
+        {{else}}
+        <span class="tit text-deactivated">{{ edu_name }} | {{course_name}}</span>
+        {{/ifCond}}
+        <span class="progress_bg">
+          <span class="progress" style="width: {{completed_rate}}%"></span>
+        </span>
+        <span class="achievement alignleft">
+          {{#if course_end_dt}}
+            {{stime course_end_dt}}
+          {{else}}
+            {{completed_rate}}%
+          {{/if}}
+        </span>
+        <span class="author alignright">{{dateformat start_dt 'yy.m.d'}} ~ {{dateformat end_dt 'yy.m.d'}}</span>
+        <div style="clear: both;"></div>
+      </span>
+      </a>
+    </li>
+    {{else}}
+    <li class="item_wrap" data-yearmonth="{{dateformat start_dt 'yyyy년 m월'}}">
+      {{#if thumbnail}}
+      {{#if (isEquals ../../../loggedIn.isdemo 0)}}
+      <a href="/course/{{training_user_id}}/{{course_id}}" class="list_item" data-training-user-id="{{training_user_id}}" data-course-id="{{course_id}}">
+      {{else}}
+      <a href="#" class="list_item">
+      {{/if}}
+      <img src="/uploads/{{thumbnail}}" alt="" width="100" class="img_list" />
+      {{else}}
+      {{#if (isEquals ../../../loggedIn.isdemo 0)}}
+      <a href="/course/{{training_user_id}}/{{course_id}}" class="list_item no_img_list"  data-training-user-id="{{training_user_id}}" data-course-id="{{course_id}}">
+      {{else}}
+      <a href="#" class="list_item no_img_list">
+      {{/if}}
+      {{/if}}
+      {{#if thumbnail}}
+      <img src="/uploads/{{thumbnail}}" alt="" width="100" class="img_list" />
+      {{/if}}
+      <span class="info">
+        <div class="progress-status">
+          <div class="bootstrap-iso">
+            {{#if (isEquals completed_rate 0)}}
+            <span class="label label-default">미수강</span>
+            {{else}}
+              {{#if (isEquals completed_rate 100)}}
+              <span class="label label-success">완료</span>
+              {{else}}
+              <span class="label label-warning">진행중</span>
+              {{/if}}
+            {{/if}}
+            <span class="pull-right author">
+              {{#if teacher_name}}<i class="fa fa-user-circle" aria-hidden="true"></i>{{/if}}
+              {{teacher_name}}
+            </span>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+        <span class="tit">{{ edu_name }} | {{course_name}}</span>
+        <span class="progress_bg">
+          <span class="progress" style="width: {{completed_rate}}%"></span>
+        </span>
+        <span class="achievement alignleft">
+          {{#if course_end_dt}}
+            {{stime course_end_dt}}
+          {{else}}
+            {{completed_rate}}%
+          {{/if}}
+        </span>
+        <span class="author alignright">{{dateformat start_dt 'yy.m.d'}} ~ {{dateformat end_dt 'yy.m.d'}}</span>
+        <div style="clear: both;"></div>
+      </span>
+      </a>
+    </li>
+    {{/if}}
 	{{/each}}
 	</ol>
-  {{else}}
-  <div class="evaluation_section">
-    <h3 class="tit">{{header}}이 존재하지 않습니다.</h3>
-  </div>
   {{/if}}
 </div>
 
+{{#if (isEquals current_path 'passed')}}
+{{#if courses}}
+<div class="center">
+  <div class="pagination">
+    {{#paginate pagination type="previous"}}
+    <a {{#if disabled}}class="not-active"{{/if}} data-page="{{n}}" href="#">&laquo;</a>
+    {{/paginate}}
+    {{#paginate pagination type="middle"}}
+    <a {{#if active}}class="active"{{/if}} data-page="{{n}}" href="#">{{n}}</a>
+    {{/paginate}}
+    {{#paginate pagination type="next"}}
+    <a {{#if disabled}}class="not-active"{{/if}} data-page="{{n}}" href="#">&raquo;</a>
+    {{/paginate}}
+  </div>
+</div>
+{{/if}}
+{{/if}}
+
 <br /><br /><br />
 {{#ifCond courses.length '>' 0}}
-<a href="/course/{{next_training_user_id}}/{{next_course_id}}" style="text-decoration: none;">
+{{#if (isEquals ../loggedIn.isdemo 0)}}
+{{#if ../next_training_user_id }}
+<a href="/course/{{next_training_user_id}}/{{next_course_id}}" class="btn-play">
+{{else}}
+<a href="#" class="btn-play">
+{{/if}}
+{{else}}
+<a href="#" class="btn-play">
+{{/if}}
 	<div class="btn_play">
 		<span class="ico ico_play"></span>
-    
   {{#if (isEquals count_course_done 0)}}
     <span class="txt">학습하기</span>
   {{else}}
@@ -49,4 +224,3 @@
 	</div>
 </a>
 {{/ifCond}}
-
