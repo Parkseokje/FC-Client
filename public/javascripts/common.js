@@ -1,12 +1,10 @@
 'use strict';
-window.define([
-  'jquery',
-  'axios',
-  'download',
-  'handlebars',
-  'es6-promise',
-  'jqueryMarquee'
-], function ($, axios, download, Handlebars) {
+window.define(['jquery', 'axios', 'download', 'handlebars', 'es6-promise', 'jqueryMarquee'], function (
+  $,
+  axios,
+  download,
+  Handlebars
+) {
   window.axios = axios;
   // https://github.com/stefanpenner/es6-promise 참고
   require('es6-promise').polyfill();
@@ -14,10 +12,11 @@ window.define([
 
   $(function () {
     // 공지사항 조회
-    axios.get('/api/v1/notices')
+    axios
+      .get('/api/v1/notices')
       .then(function (res) {
         // console.log(res.data.list);
-        if (res.data.list.length > 0) {
+        if (res.data.list && res.data.list.length > 0) {
           $('.marquee').show();
 
           res.data.list.forEach(notice => {
@@ -89,7 +88,7 @@ window.define([
           });
 
           // set parameter value (use 'true' if empty)
-          var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
+          var paramValue = typeof a[1] === 'undefined' ? true : a[1];
 
           // (optional) keep case consistent
           paramName = paramName.toLowerCase();
