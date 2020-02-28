@@ -36,7 +36,7 @@ passport.use(
       passReqToCallback: true
     },
     (req, phone, password, done) => {
-      if (!validator.isLength(phone, { min: 10, max: 11 })) {
+      if (!validator.isLength(phone, { min: 4, max: 11 })) {
         return done(null, false, { message: '잘못된 핸드폰 형식입니다.' });
       }
       connection.query(QUERY.AUTH.SEL_INFO, [phone], (err, data) => {
@@ -119,6 +119,7 @@ router.post('/login', function (req, res, next) {
       return next(err);
     }
     if (!user) {
+      console.log(info);
       return res.send(401, { success: false, message: 'authentication failed' });
     }
 
