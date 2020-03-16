@@ -111,6 +111,7 @@ router.get('/login', util.getLogoInfo, (req, res, next) => {
 });
 
 // 로그인 처리
+
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', (err, user, info) => {
     console.log(user);

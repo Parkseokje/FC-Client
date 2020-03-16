@@ -76,7 +76,7 @@ function (Util, AquaPlayerService, Timer, templateHTML5, templateWindow) {
   });
 
   function initPlayer () {
-    console.log('initPlayer');
+    console.log('initPlayer2');
     player.setVolume(0.5);
 
     player.bindEvent('Error', function (ec, msg) {

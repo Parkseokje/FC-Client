@@ -955,10 +955,10 @@ batch@0.6.1:
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha1-3DQxT05nkxgJP8dgJyUl+UvyXBY=
 
-bcrypt@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-4.0.0.tgz#c973832823c45d6d5cbcd943f5f07dde546df252"
-  integrity sha512-UroxVJgmpeek3uxjY0IgtVtegM8EQqSLXnc5HE59m388MGZr0wPpRBqKJTaTraY3YEJOo1XIczExiEY9eeOCmg==
+bcrypt@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-4.0.1.tgz#06e21e749a061020e4ff1283c1faa93187ac57fe"
+  integrity sha512-hSIZHkUxIDS5zA2o00Kf2O5RfVbQ888n54xQoF/eIaquU4uaLxK8vhhBdktd0B3n2MjkcAWzv4mnhogykBKOUQ==
   dependencies:
     node-addon-api "^2.0.0"
     node-pre-gyp "0.14.0"
@@ -5721,7 +5721,7 @@ node-libs-browser@^0.7.0:
     util "^0.10.3"
     vm-browserify "0.0.4"
 
-node-pre-gyp@*, node-pre-gyp@0.14.0:
+node-pre-gyp@0.14.0:
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.14.0.tgz#9a0596533b877289bcad4e143982ca3d904ddc83"
   integrity sha512-+CvDC7ZttU/sSt9rFjix/P05iS43qHCOOGzcr3Ry99bXG7VX953+vFyEuph/tfqoYu8dttBkE86JSKBO2OzcxA==
