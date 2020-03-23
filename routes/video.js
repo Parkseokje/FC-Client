@@ -38,7 +38,7 @@ router.post('/log/playtime', util.isAuthenticated, (req, res, next) => {
   connection.beginTransaction((err) => {
     // 트렌젝션 오류 발생
     if (err) {
-      console.log('error(1):', err);
+      console.error('error(1):', err);
       return res.json({
         success: false,
         msg: err
@@ -100,7 +100,7 @@ router.post('/log/playtime', util.isAuthenticated, (req, res, next) => {
     // async endpoint
     (err, results) => {
       if (err) {
-        console.log('error(2):', err);
+        console.error('error(2):', err);
         return connection.rollback(() => {
           res.json({
             success: false,
