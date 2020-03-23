@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const mySqlDbc = require('../commons/db_conn')();
-const connection = mySqlDbc.init();
+// const mySqlDbc = require('../commons/db_conn')();
+// const connection = mySqlDbc.init();
 const QUERY = require('../database/query');
 // require('../commons/helpers');
 
