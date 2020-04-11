@@ -33,7 +33,7 @@ const DEST = {
   FONTS: DIR.DEST + '/fonts'
 };
 
-gulp.task('js', () => {
+gulp.task('js', async () => {
   return (
     gulp
       .src(SRC.JS, { base: './public/javascripts' })
@@ -50,7 +50,7 @@ gulp.task('js', () => {
 });
 
 // SRC.VENDOR, { base: './public/vendor' }
-gulp.task('vendor', () => {
+gulp.task('vendor', async () => {
   return gulp
     .src([
       DIR.SRC + '/vendor/' + 'plugins/requirejs/require.2.3.2.js',
@@ -80,13 +80,16 @@ gulp.task('vendor', () => {
     .pipe(gulp.dest(DEST.VENDOR));
 });
 
-gulp.task('copy-font', () => {
+gulp.task('copy-font', async () => {
   return gulp
-    .src([DIR.SRC + '/vendor/' + 'font-awesome-4.7.0/fonts/*.*', DIR.SRC + '/vendor/' + 'bootstrap/fonts/*.*'])
+    .src([
+      DIR.SRC + '/vendor/' + 'font-awesome-4.7.0/fonts/*.*',
+      DIR.SRC + '/vendor/' + 'bootstrap/fonts/*.*'
+    ])
     .pipe(gulp.dest(DEST.FONTS));
 });
 
-gulp.task('copy-css', () => {
+gulp.task('copy-css', async () => {
   return gulp
     .src([
       DIR.SRC + '/vendor/' + 'plugins/star-rating-svg/star-rating-svg.css',
@@ -100,28 +103,28 @@ gulp.task('copy-css', () => {
     .pipe(gulp.dest(DIR.DEST + '/stylesheets/'));
 });
 
-gulp.task('css', () => {
+gulp.task('css', async () => {
   return gulp
     .src(SRC.CSS)
     .pipe(cleanCSS({ compatibility: 'ie8' }))
     .pipe(gulp.dest(DEST.CSS));
 });
 
-gulp.task('html', () => {
+gulp.task('html', async () => {
   return gulp
     .src(SRC.HTML)
     .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(gulp.dest(DEST.HTML));
 });
 
-gulp.task('images', () => {
+gulp.task('images', async () => {
   return gulp
     .src(SRC.IMAGES, { base: './public/images' })
     .pipe(imagemin())
     .pipe(gulp.dest(DEST.IMAGES));
 });
 
-gulp.task('clean', () => {
+gulp.task('clean', async () => {
   return del.sync([DIR.DEST]);
 });
 
@@ -142,6 +145,19 @@ gulp.task('clean', () => {
 //   }
 // });
 
-gulp.task('default', ['clean', 'js', 'vendor', 'copy-font', 'copy-css', 'css', 'html', 'images'], () => {
-  gutil.log('Gulp task completed.');
-});
+gulp.task(
+  'default',
+  gulp.parallel([
+    'clean',
+    'js',
+    'vendor',
+    'copy-font',
+    'copy-css',
+    'css',
+    'html',
+    'images'
+  ]),
+  () => {
+    gutil.log('Gulp task completed.');
+  }
+);
