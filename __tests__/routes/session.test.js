@@ -3,12 +3,10 @@ const request = require('supertest');
 var server = request.agent(app);
 
 // training_user_id: 7630
-// video_id: 577
-// played_seconds: 10
-// video_duration: 4544.449887
-// currenttime: 1017.70143
+// course_id: 376
+// course_list_id: 916
 
-xdescribe('Should record video play time', () => {
+describe('Should record session play time', () => {
   test('login', (done) => {
     server
       .post('/login')
@@ -18,19 +16,17 @@ xdescribe('Should record video play time', () => {
       .end(done);
   });
 
-  test('log video play time', (done) => {
+  test('log session start time', (done) => {
     const payload = {
       training_user_id: 7630,
-      video_id: 577,
-      played_seconds: 10,
-      video_duration: 4544.449887,
-      currenttime: 1017.70143
+      course_id: 376,
+      course_list_id: 916
     };
 
-    server.post('/video/log/playtime').send(payload).expect(200).end(done);
+    server.post('/session/log/starttime').send(payload).expect(200).end(done);
   });
 
-  test('log video end time', (done) => {
+  xtest('log session end time', (done) => {
     const payload = {
       video_id: 577,
       video_duration: 4544.449887
