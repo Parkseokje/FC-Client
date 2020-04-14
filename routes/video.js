@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const mysqlDbc = require('../commons/db_conn')();
-const connection = mysqlDbc.init();
+// const mysqlDbc = require('../commons/db_conn')();
+// const connection = mysqlDbc.init();
 const QUERY = require('../database/query');
 const async = require('async');
 const util = require('../util/util');
+const pool = require('../commons/db_conn_pool');
 
 /**
  * 비디오 환경설정값을 리턴한다.
@@ -23,6 +24,7 @@ router.get('/settings', util.isAuthenticated, (req, res, next) => {
 
 // url: /api/v1/log/video/playtime
 // 비디오 재생시간(play_seconds, 재생중 매 5초 마다) 기록
+// router.post('/log/playtime', (req, res, next) => {
 router.post('/log/playtime', util.isAuthenticated, (req, res, next) => {
   const inputs = {
     user_id: req.user.user_id,
@@ -35,96 +37,111 @@ router.post('/log/playtime', util.isAuthenticated, (req, res, next) => {
   let videoLogId = null; // log_user_video 테이블의 id
   let totalPlayedSeconds = null; // 총 재생시간
 
-  connection.beginTransaction((err) => {
-    // 트렌젝션 오류 발생
-    if (err) {
-      console.error('error(1):', err);
-      return res.json({
-        success: false,
-        msg: err
-      });
-    }
+  // console.log('inputs', inputs);
 
-    // async.series 쿼리 시작
-    async.series([
-      (callback) => {
-        // 오늘일자의 로그가 없을 경우 생성
-        connection.query(QUERY.LOG_VIDEO.INS_VIDEO, [
-          inputs.user_id,
-          inputs.training_user_id,
-          inputs.video_id,
-          inputs.training_user_id,
-          inputs.video_id
-        ],
-          (err, data) => {
-            // console.log(query.sql);
-            callback(err, data);
-          }
-        );
-      },
-      (callback) => {
-        // log id를 구한다.
-        connection.query(QUERY.LOG_VIDEO.SEL_MAXID, [
-          inputs.user_id,
-          inputs.video_id
-        ], (err, data) => {
-          videoLogId = data[0].id;
-          callback(err, data);
-        });
-      },
-      (callback) => {
-        // 재생시간을 수정한다.
-        connection.query(QUERY.LOG_VIDEO.UPD_VIDEO_PLAYTIME, [
-          inputs.played_seconds,
-          inputs.video_duration,
-          inputs.currenttime,
-          videoLogId
-        ],
-          (err, data) => {
-            callback(err, data);
-          }
-        );
-      },
-      (callback) => {
-        // 재생시간을 조회한다.
-        connection.query(QUERY.LOG_VIDEO.SEL_TOTAL_VIDEO_PLAYTIME, [
-          inputs.user_id,
-          inputs.training_user_id,
-          inputs.video_id
-        ], (err, data) => {
-          totalPlayedSeconds = data[0].total_played_seconds;
-          callback(err, data);
+  pool.getConnection((poolError, connection) => {
+    if (poolError) throw poolError;
+
+    connection.beginTransaction((err) => {
+      // 트렌젝션 오류 발생
+      if (err) {
+        console.error('error(1):', err);
+        return res.json({
+          success: false,
+          msg: err
         });
       }
-    ],
-    // async endpoint
-    (err, results) => {
-      if (err) {
-        console.error('error(2):', err);
-        return connection.rollback(() => {
-          res.json({
-            success: false,
-            msg: err
-          });
-        });
-      } else {
-        connection.commit((err) => {
-          // 커밋 오류 발생
+
+      // async.series 쿼리 시작
+      async.series(
+        [
+          (callback) => {
+            // 오늘일자의 로그가 없을 경우 생성
+            connection.query(
+              QUERY.LOG_VIDEO.INS_VIDEO,
+              [
+                inputs.user_id,
+                inputs.training_user_id,
+                inputs.video_id,
+                inputs.training_user_id,
+                inputs.video_id
+              ],
+              (err, data) => {
+                // console.log(query.sql);
+                callback(err, data);
+              }
+            );
+          },
+          (callback) => {
+            // log id를 구한다.
+            connection.query(
+              QUERY.LOG_VIDEO.SEL_MAXID,
+              [inputs.user_id, inputs.video_id],
+              (err, data) => {
+                videoLogId = data[0].id;
+                callback(err, data);
+              }
+            );
+          },
+          (callback) => {
+            // 재생시간을 수정한다.
+            connection.query(
+              QUERY.LOG_VIDEO.UPD_VIDEO_PLAYTIME,
+              [
+                inputs.played_seconds,
+                inputs.video_duration,
+                inputs.currenttime,
+                videoLogId
+              ],
+              (err, data) => {
+                callback(err, data);
+              }
+            );
+          },
+          (callback) => {
+            // 재생시간을 조회한다.
+            connection.query(
+              QUERY.LOG_VIDEO.SEL_TOTAL_VIDEO_PLAYTIME,
+              [inputs.user_id, inputs.training_user_id, inputs.video_id],
+              (err, data) => {
+                totalPlayedSeconds = data[0].total_played_seconds;
+                callback(err, data);
+              }
+            );
+          }
+        ],
+        // async endpoint
+        (err, results) => {
+          connection.release();
+
           if (err) {
+            console.error('error(2):', err);
             return connection.rollback(() => {
               res.json({
                 success: false,
                 msg: err
               });
             });
+          } else {
+            connection.commit((err) => {
+              // 커밋 오류 발생
+              if (err) {
+                return connection.rollback(() => {
+                  res.json({
+                    success: false,
+                    msg: err
+                  });
+                });
+              }
+              // 커밋 성공
+              res.json({
+                success: true,
+                total_played_seconds: totalPlayedSeconds
+              });
+            });
           }
-          // 커밋 성공
-          res.json({
-            success: true,
-            total_played_seconds: totalPlayedSeconds
-          });
-        });
-      }
+        }
+      );
     });
   });
 });
@@ -142,64 +159,73 @@ router.post('/log/endtime', util.isAuthenticated, (req, res, next) => {
   };
   var videoLogId = null; // log_user_video 테이블의 id
 
-  connection.beginTransaction((err) => {
-    // 트렌젝션 오류 발생
-    if (err) {
-      return res.json({
-        success: false,
-        msg: err
-      });
-    }
+  pool.getConnection((poolError, connection) => {
+    if (poolError) throw poolError;
 
-    // async.series 쿼리 시작
-    async.series([
-      (callback) => {
-        // log id를 구한다.
-        connection.query(QUERY.LOG_VIDEO.SEL_MAXID, [
-          inputs.user_id,
-          inputs.video_id
-        ], (err, data) => {
-          videoLogId = data[0].id;
-          callback(err, data);
-        });
-      },
-      (callback) => {
-        // 종료일시를 수정한다.
-        connection.query(QUERY.LOG_VIDEO.UPD_VIDEO_ENDTIME, [
-          videoLogId
-        ],
-          (err, data) => {
-            callback(err, data);
-          }
-        );
-      }
-    ],
-    (err, results) => {
+    connection.beginTransaction((err) => {
+      // 트렌젝션 오류 발생
       if (err) {
-        // 쿼리 오류 발생
-        return connection.rollback(() => {
-          res.json({
-            success: false,
-            msg: err
-          });
+        return res.json({
+          success: false,
+          msg: err
         });
-      } else {
-        connection.commit((err) => {
-          // 커밋 오류 발생
+      }
+
+      // async.series 쿼리 시작
+      async.series(
+        [
+          (callback) => {
+            // log id를 구한다.
+            connection.query(
+              QUERY.LOG_VIDEO.SEL_MAXID,
+              [inputs.user_id, inputs.video_id],
+              (err, data) => {
+                videoLogId = data[0].id;
+                callback(err, data);
+              }
+            );
+          },
+          (callback) => {
+            // 종료일시를 수정한다.
+            connection.query(
+              QUERY.LOG_VIDEO.UPD_VIDEO_ENDTIME,
+              [videoLogId],
+              (err, data) => {
+                callback(err, data);
+              }
+            );
+          }
+        ],
+        (err, results) => {
+          connection.release();
+
           if (err) {
+            // 쿼리 오류 발생
             return connection.rollback(() => {
               res.json({
                 success: false,
                 msg: err
               });
             });
+          } else {
+            connection.commit((err) => {
+              // 커밋 오류 발생
+              if (err) {
+                return connection.rollback(() => {
+                  res.json({
+                    success: false,
+                    msg: err
+                  });
+                });
+              }
+              // 커밋 성공
+              res.json({
+                success: true
+              });
+            });
           }
-          // 커밋 성공
-          res.json({
-            success: true
-          });
-        });
-      }
+        }
+      );
     });
   });
 });
@@ -215,34 +241,48 @@ router.delete('/log', util.isAuthenticated, (req, res, next) => {
   };
   var videoLogId = null;
 
-  async.series([
-    // 오늘의 마지막 비디오 로그 아이디를 구한다.
-    (callback) => {
-      connection.query(QUERY.LOG_VIDEO.SEL_MAXID, [inputs.user_id, inputs.video_id], (err, data) => {
-        videoLogId = data[0].id;
-        callback(err, data); // results[0]
-      });
-    },
-    // 위에서 구한 로그 아이디로 비디오 로그를 삭제한다.
-    (callback) => {
-      connection.query(QUERY.LOG_VIDEO.DELETE_VIDEO_LOG, [videoLogId], (err, data) => {
-        callback(err, data); // results[1]
-      });
-    }
-  ],
-  (err, results) => {
-    if (err) {
-      // 쿼리 실패
-      return res.json({
-        success: false,
-        msg: err
-      });
-    } else {
-      // 쿼리 성공
-      return res.json({
-        success: true
-      });
-    }
+  pool.getConnection((poolError, connection) => {
+    if (poolError) throw poolError;
+
+    async.series(
+      [
+        // 오늘의 마지막 비디오 로그 아이디를 구한다.
+        (callback) => {
+          connection.query(
+            QUERY.LOG_VIDEO.SEL_MAXID,
+            [inputs.user_id, inputs.video_id],
+            (err, data) => {
+              videoLogId = data[0].id;
+              callback(err, data); // results[0]
+            }
+          );
+        },
+        // 위에서 구한 로그 아이디로 비디오 로그를 삭제한다.
+        (callback) => {
+          connection.query(
+            QUERY.LOG_VIDEO.DELETE_VIDEO_LOG,
+            [videoLogId],
+            (err, data) => {
+              callback(err, data); // results[1]
+            }
+          );
+        }
+      ],
+      (err, results) => {
+        if (err) {
+          // 쿼리 실패
+          return res.json({
+            success: false,
+            msg: err
+          });
+        } else {
+          // 쿼리 성공
+          return res.json({
+            success: true
+          });
+        }
+      }
+    );
   });
 });
 

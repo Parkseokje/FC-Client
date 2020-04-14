@@ -129,7 +129,7 @@ router.get('/login', util.getLogoInfo, (req, res, next) => {
 
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', (err, user, info) => {
-    console.log(user);
+    // console.log(user);
     if (err) {
       console.error(err);
       return next(err);
