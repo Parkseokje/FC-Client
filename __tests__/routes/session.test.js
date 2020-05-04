@@ -6,8 +6,8 @@ var server = request.agent(app);
 // course_id: 376
 // course_list_id: 916
 
-describe('Should record session play time', () => {
-  test('login', (done) => {
+xdescribe('Should record session play time', () => {
+  xtest('login', (done) => {
     server
       .post('/login')
       .send({ cell: '01072929757', password: '9757' })
@@ -16,7 +16,7 @@ describe('Should record session play time', () => {
       .end(done);
   });
 
-  test('log session start time', (done) => {
+  xtest('log session start time', (done) => {
     const payload = {
       training_user_id: 7630,
       course_id: 376,

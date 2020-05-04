@@ -269,6 +269,8 @@ router.delete('/log', util.isAuthenticated, (req, res, next) => {
         }
       ],
       (err, results) => {
+        connection.release();
+
         if (err) {
           // 쿼리 실패
           return res.json({

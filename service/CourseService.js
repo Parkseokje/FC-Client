@@ -50,20 +50,20 @@ CourseService.makeQuizList = function (quiz_list) {
 
         if (optiondata) {
           for (var index = 0; index < optiondata.length; index++) {
-              var option = optiondata[index];
+            var option = optiondata[index];
 
-              if (option.iscorrect) {
-                quizdata.answer.push(option.option);
-              }
-
-              quizdata.options.push({
-                id: option.option_id,
-                opt_id: option.option_group_id,
-                option: option.option,
-                iscorrect: option.iscorrect,
-                order: option.option_order
-              });
+            if (option.iscorrect) {
+              quizdata.answer.push(option.option);
             }
+
+            quizdata.options.push({
+              id: option.option_id,
+              opt_id: option.option_group_id,
+              option: option.option,
+              iscorrect: option.iscorrect,
+              order: option.option_order
+            });
+          }
 
           quizdata.answer = quizdata.answer.join(', ');
         }

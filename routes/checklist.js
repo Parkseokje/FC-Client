@@ -56,6 +56,8 @@ router.post('/submit', util.isAuthenticated, (req, res, next) => {
             });
         },
         (err, results) => {
+          connection.release();
+
           if (err) {
             return connection.rollback(() => {
               res.json({
@@ -74,7 +76,6 @@ router.post('/submit', util.isAuthenticated, (req, res, next) => {
                 });
               }
 
-              connection.release();
               return res.json({
                 success: true
               });
