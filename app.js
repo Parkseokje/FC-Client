@@ -87,7 +87,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(device.capture());
+app.use(device.capture({ parseUserAgent: true }));
 // device.enableDeviceHelpers(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
