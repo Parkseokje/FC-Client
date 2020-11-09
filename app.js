@@ -45,10 +45,10 @@ app.use(function (req, res, next) {
 });
 
 app.all('/*', function (req, res, next) {
- // CORS headers
+  // CORS headers
   res.header('Access-Control-Allow-Origin', '*'); // restrict it to the required domain
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
- // Set custom headers for CORS
+  // Set custom headers for CORS
   res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -88,6 +88,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(device.capture());
+// device.enableDeviceHelpers(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules')));

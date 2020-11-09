@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 // const mysqlDbc = require('../commons/db_conn')();
@@ -70,8 +71,8 @@ router.get(
           // results[1]
           (callback) => {
             switch (courseList.type) {
-            case 'VIDEO':
-              connection.query(
+              case 'VIDEO':
+                connection.query(
                   QUERY.COURSE_LIST.SEL_VIDEO,
                   [courseList.video_id],
                   (err, data) => {
@@ -79,10 +80,10 @@ router.get(
                     callback(err, data);
                   }
                 );
-              break;
+                break;
 
-            case 'CHECKLIST':
-              connection.query(
+              case 'CHECKLIST':
+                connection.query(
                   QUERY.COURSE_LIST.GetChecklistByCourseListId,
                   [courseList.id],
                   (err, data) => {
@@ -99,18 +100,18 @@ router.get(
                     callback(err, data);
                   }
                 );
-              break;
+                break;
 
-            default:
+              default:
                 // QUIZ / FINAL
-              connection.query(
+                connection.query(
                   QUERY.COURSE_LIST.GetQuizDataByGroupId,
                   [courseList.quiz_group_id],
                   (err, data) => {
                     callback(err, data); // results[1]
                   }
                 );
-              break;
+                break;
             }
           },
           // (비디오 세션일 경우에만 해당) 비디오 총 시청시간 조회
@@ -195,17 +196,17 @@ router.get(
               }
 
               switch (videoType) {
-              case 'aqua':
-                if (deviceType === 'PHONE') {
-                  returnData.current_path = 'aqua-mobile';
-                } else if (deviceType === 'DESKTOP') {
-                  returnData.current_path = 'aqua-desktop';
-                }
-                break;
+                case 'aqua':
+                  if (deviceType === 'DESKTOP') {
+                    returnData.current_path = 'aqua-desktop';
+                  } else {
+                    returnData.current_path = 'aqua-mobile';
+                  }
+                  break;
 
-              default:
-                returnData.current_path = videoType;
-                break;
+                default:
+                  returnData.current_path = videoType;
+                  break;
               }
 
               returnData.content = results[1][0];
@@ -254,18 +255,15 @@ router.get(
                 // console.log('returnData:', JSON.stringify(returnData, null, 2));
 
                 switch (req.device.type.toUpperCase()) {
-                case 'DESKTOP':
-                  console.log('video_pc');
-                  res.render('video_pc', returnData);
-                  break;
+                  case 'DESKTOP':
+                    console.log('video_pc');
+                    res.render('video_pc', returnData);
+                    break;
 
-                case 'PHONE':
-                  console.log('video_aqua');
-                  res.render('video_aqua', returnData);
-                  break;
-
-                default:
-                  break;
+                  default:
+                    console.log('video_aqua');
+                    res.render('video_aqua', returnData);
+                    break;
                 }
               }
             } else if (

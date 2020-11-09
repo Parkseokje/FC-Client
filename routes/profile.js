@@ -5,7 +5,7 @@ const router = express.Router();
 // const connection = mysqlDbc.init();
 const pool = require('../commons/db_conn_pool');
 const QUERY = require('../database/query');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const util = require('../util/util');
 
 router.get('/', util.isAuthenticated, util.isTermsApproved, util.getLogoInfo, (req, res, next) => {

@@ -10,7 +10,7 @@ const QUERY = require('../database/query');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 // const PointService = require('../service/PointService');
 const pool = require('../commons/db_conn_pool');
 const util = require('../util/util');
@@ -405,6 +405,7 @@ router.get(
   util.isAuthenticated,
   util.getLogoInfo,
   (req, res, next) => {
+    console.log(req.device);
     const deviceType = req.device.type.toUpperCase();
     let videoUrl;
 
