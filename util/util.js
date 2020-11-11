@@ -16,7 +16,7 @@ exports.getLogoInfo = (req, res, next) => {
       break;
 
     case 'trainee-pspedu.edu1004.kr':
-      logoImageName = 'pspfnd.png';
+      logoImageName = 'pspfnd2.png';
       logoName = '피에스피에프앤디주식회사';
       theme = 'skin-blue-light';
       vodUrl = 'http://mst.aquan.pspfnd.edu1004.kr/orangenamu/pspfnd/';
