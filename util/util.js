@@ -15,7 +15,7 @@ exports.getLogoInfo = (req, res, next) => {
       vodPcUrl = 'http://pcst.aquan.artandheart.edu1004.kr/orangenamu/artandheart/';
       break;
 
-    case 'trainee-pspedu.edu1004.kr':
+    case 'pspedu.edu1004.kr':
       logoImageName = 'pspfnd2.png';
       logoName = '피에스피에프앤디주식회사';
       theme = 'skin-red-light';
