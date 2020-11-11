@@ -7,51 +7,30 @@ exports.getLogoInfo = (req, res, next) => {
   let vodPcUrl;
 
   switch (req.headers.host) {
-  // case 'm.vodaeyewear.orangenamu.net':
-  //   logoImageName = 'vodaeyewear.png';
-  //   logoName = '보다안경원';
-  //   theme = 'skin-green-light';
-  //   break;
-  case 'trainee-waffle.edu1004.kr':
-    logoImageName = 'waffle.kosc.png';
-    logoName = '와플대학';
-    theme = 'skin-red-light';
-    vodUrl = 'http://mst.aquan.waffle.edu1004.kr/orangenamu/waffle/';
-    vodPcUrl = 'http://pcst.aquan.waffle.edu1004.kr/orangenamu/waffle/';
-    break;
+    case 'trainee-artandheart.edu1004.kr':
+      logoImageName = 'artandheart.png';
+      logoName = '아트앤하트';
+      theme = 'skin-blue-light';
+      vodUrl = 'http://mst.aquan.artandheart.edu1004.kr/orangenamu/artandheart/';
+      vodPcUrl = 'http://pcst.aquan.artandheart.edu1004.kr/orangenamu/artandheart/';
+      break;
 
-  case 'trainee-momstouch.edu1004.kr':
-    logoImageName = 'momstouch.png';
-    logoName = '맘스터치';
-    theme = 'skin-momstouch';
-    vodUrl = 'http://mst.aquan.momstouch.edu1004.kr/orangenamu/momstouch/';
-    vodPcUrl = 'http://pcst.aquan.momstouch.edu1004.kr/orangenamu/momstouch/';
-    break;
+    case 'trainee-pspedu.edu1004.kr':
+      logoImageName = 'pspfnd.png';
+      logoName = '피에스피에프앤디주식회사';
+      theme = 'skin-blue-light';
+      vodUrl = 'http://mst.aquan.pspfnd.edu1004.kr/orangenamu/pspfnd/';
+      vodPcUrl = 'http://pcst.aquan.pspfnd.edu1004.kr/orangenamu/pspfnd/';
+      break;
 
-  case 'trainee-homesfood.edu1004.kr':
-    logoImageName = 'homesfood-dark2.png';
-    logoName = '홈스푸드';
-    theme = 'skin-homesfood';
-    vodUrl = 'http://mst.aquan.homesfood.edu1004.kr/orangenamu/homesfood/';
-    vodPcUrl = 'http://pcst.aquan.homesfood.edu1004.kr/orangenamu/homesfood/';
-    break;
-
-  case 'trainee-artandheart.edu1004.kr':
-    logoImageName = 'artandheart.png';
-    logoName = '아트앤하트';
-    theme = 'skin-blue-light';
-    vodUrl = 'http://mst.aquan.artandheart.edu1004.kr/orangenamu/artandheart/';
-    vodPcUrl = 'http://pcst.aquan.artandheart.edu1004.kr/orangenamu/artandheart/';
-    break;
-
-  case 'trainee-dev.edu1004.kr':
-  default:
-    logoImageName = 'orangenamu.png';
-    logoName = '오렌지나무시스템';
-    theme = 'skin-yellow-light';
-    vodUrl = 'http://mst.aquan.dev.edu1004.kr/orangenamu/dev/';
-    vodPcUrl = 'http://pcst.aquan.dev.edu1004.kr/orangenamu/dev/';
-    break;
+    case 'trainee-dev.edu1004.kr':
+    default:
+      logoImageName = 'orangenamu.png';
+      logoName = '오렌지나무시스템';
+      theme = 'skin-yellow-light';
+      vodUrl = 'http://mst.aquan.dev.edu1004.kr/orangenamu/dev/';
+      vodPcUrl = 'http://pcst.aquan.dev.edu1004.kr/orangenamu/dev/';
+      break;
   }
   res.locals.logoImageName = logoImageName;
   res.locals.logoName = logoName;
@@ -88,7 +67,7 @@ exports.microtime = (getAsFloat) => {
     return Math.round(now);
   }
 
-    // Dirty trick to only get the integer part
+  // Dirty trick to only get the integer part
   s = now | 0;
 
   return (Math.round((now - s) * multiplier) / multiplier) + ' ' + s;

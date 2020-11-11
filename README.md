@@ -18,6 +18,10 @@ $ yarn install
 $ yarn start # http:localhost:3002에서 확인
 ```
 
+## 이슈
+
+- 서버에서 device type에 따라 다른 아쿠아플레이어 버젼(htmp/app)의 페이지를 내려주는데 아이패드의 경우 pc로 인식되는 문제로 인해 app 버젼의 플레이어가 실행되지 않음.
+
 ## 트러블 슈팅
 
 - ./secret 파일은 gitignore 되어 있음. 서버에 import/별도 작성해야 함.
