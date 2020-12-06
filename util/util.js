@@ -1,5 +1,6 @@
 
 exports.getLogoInfo = (req, res, next) => {
+  let corp = 'orangenamu';
   let logoImageName;
   let logoName;
   let theme;
@@ -8,6 +9,7 @@ exports.getLogoInfo = (req, res, next) => {
 
   switch (req.headers.host) {
     case 'trainee-artandheart.edu1004.kr':
+      corp = 'artandheart';
       logoImageName = 'artandheart.png';
       logoName = '아트앤하트';
       theme = 'skin-blue-light';
@@ -16,6 +18,7 @@ exports.getLogoInfo = (req, res, next) => {
       break;
 
     case 'pspedu.edu1004.kr':
+      corp = 'pspedu';
       logoImageName = 'pspfnd2.png';
       logoName = '피에스피에프앤디주식회사';
       theme = 'skin-red-light';
@@ -32,6 +35,8 @@ exports.getLogoInfo = (req, res, next) => {
       vodPcUrl = 'http://pcst.aquan.dev.edu1004.kr/orangenamu/dev/';
       break;
   }
+
+  res.corp = corp;
   res.locals.logoImageName = logoImageName;
   res.locals.logoName = logoName;
   res.locals.theme = theme;

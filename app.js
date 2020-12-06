@@ -75,7 +75,7 @@ global.AppRoot = process.env.PWD;
 app.use(cookieSession({
   keys: ['FC_Mobile'],
   cookie: {
-    maxAge: 10000 * 60 * 60 // 유효기간 10시간
+    maxAge: 24 * 14 * 60 * 60 * 1000 // 유효기간 2주
   }
 }));
 
