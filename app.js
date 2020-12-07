@@ -2,7 +2,7 @@
 
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+// var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -67,7 +67,7 @@ hbs.registerPartials(path.join(__dirname, '/views/partials'));
 hbs.registerPartials(path.join(__dirname, '/views/modal'));
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'dist', 'images', 'favicon', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'dist', 'images', 'favicon', 'favicon.ico')));
 
 global.PROJ_TITLE = 'OrangeNamu ';
 global.AppRoot = process.env.PWD;
