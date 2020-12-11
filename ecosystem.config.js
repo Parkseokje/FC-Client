@@ -24,7 +24,7 @@ module.exports = {
       key: '~/.ssh/orangenamu.pem',
       user: 'ec2-user',
       host: 'ec2-52-79-160-63.ap-northeast-2.compute.amazonaws.com',
-      ref: 'origin/master',
+      ref: 'origin/feature/aquanplayer',
       repo: 'git@github.com:Parkseokje/FC-Client.git',
       path: '/home/ec2-user/FC-mobile',
       'pre-deploy': 'git reset --hard',
