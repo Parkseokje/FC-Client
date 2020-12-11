@@ -92,8 +92,8 @@ exports.getPlayer = (req, res, next) => {
 
   // console.log('param : ', param);
 
-  execFile(path.join(__dirname, 'aquaplayer_modules/ENCAQALINK_V2_x64'),
-    [ '-t', 'ENC', param ],
+  execFile(path.join(__dirname, 'aquaplayer_modules/2.0.383.5980/ENCAQALINK_V2_x64'),
+    ['-t', 'ENC', param],
     (err, stdout, stderr) => {
       if (err) {
         throw err;
@@ -192,8 +192,8 @@ exports.getBasePlayer = (req, res, next) => {
 
   // console.log('param : ', param);
 
-  execFile(path.join(__dirname, 'aquaplayer_modules/ENCAQALINK_V2_x64'),
-    [ '-t', 'ENC', param ],
+  execFile(path.join(__dirname, 'aquaplayer_modules/2.0.383.5980/ENCAQALINK_V2_x64'),
+    ['-t', 'ENC', param],
     (err, stdout, stderr) => {
       if (err) {
         throw err;
@@ -287,8 +287,8 @@ exports.getEncodedParam = (req, res, next) => {
 
   // console.log(param);
 
-  execFile(path.join(__dirname, 'aquaplayer_modules/ENCAQALINK_V2_x64'),
-    [ '-t', 'ENC', param ],
+  execFile(path.join(__dirname, 'aquaplayer_modules/2.0.383.5980/ENCAQALINK_V2_x64'),
+    ['-t', 'ENC', param],
     (err, stdout, stderr) => {
       if (err) {
         throw err;

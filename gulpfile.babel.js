@@ -63,10 +63,10 @@ gulp.task('vendor', async () => {
       DIR.SRC + '/vendor/' + 'plugins/es6-promise/dist/es6-promise.min.js',
       DIR.SRC + '/vendor/' + 'bootstrap/js/bootstrap.min.js',
       DIR.SRC + '/vendor/' + 'easytimer.js',
-      DIR.SRC + '/vendor/' + 'aquaplayer/js/nplayer.js',
-      DIR.SRC + '/vendor/' + 'aquaplayer/js/nplayer_ui.js',
-      DIR.SRC + '/vendor/' + 'aquaplayer/js/cdnproxy.js',
-      DIR.SRC + '/vendor/' + 'aquaplayer/js/nplayer_conf.js',
+      DIR.SRC + '/vendor/' + 'aquaplayer.2.0.329.4576/js/nplayer.js',
+      DIR.SRC + '/vendor/' + 'aquaplayer.2.0.329.4576/js/nplayer_ui.js',
+      DIR.SRC + '/vendor/' + 'aquaplayer.2.0.329.4576/js/cdnproxy.js',
+      DIR.SRC + '/vendor/' + 'aquaplayer.2.0.329.4576/js/nplayer_conf.js',
       DIR.SRC + '/vendor/' + 'plugins/jquery.marquee/jquery.marquee.min.js',
       DIR.SRC + '/vendor/' + 'plugins/downloadjs/download.min.js',
       DIR.SRC + '/vendor/' + 'axios/dist/axios.min.js',
@@ -95,8 +95,8 @@ gulp.task('copy-css', async () => {
       DIR.SRC + '/vendor/' + 'plugins/star-rating-svg/star-rating-svg.css',
       DIR.SRC + '/vendor/' + 'font-awesome-4.7.0/css/font-awesome.min.css',
       DIR.SRC + '/vendor/' + 'bootstrap/css/bootstrap-iso.css',
-      DIR.SRC + '/vendor/' + 'aquaplayer/css/nplayer.css',
-      DIR.SRC + '/vendor/' + 'aquaplayer/css/nplayer_res.css'
+      DIR.SRC + '/vendor/' + 'aquaplayer.2.0.329.4576/css/nplayer.css',
+      DIR.SRC + '/vendor/' + 'aquaplayer.2.0.329.4576/css/nplayer_res.css'
       // DIR.SRC + '/vendor/' + 'bootstrap/css/bootstrap.min.css'
     ])
     .pipe(cleanCSS({ compatibility: 'ie8', rebase: false, debug: true }))
